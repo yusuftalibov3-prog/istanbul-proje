@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UserRole, SolidarityMessage } from '../types';
 
@@ -8,12 +7,17 @@ interface MessageFormProps {
   isSubmitting: boolean;
 }
 
+const ISTANBUL_DISTRICTS = [
+  'Adalar', 'Arnavutköy', 'Ataşehir', 'Avcılar', 'Bağcılar', 'Bahçelievler', 'Bakırköy', 'Başakşehir', 'Bayrampaşa', 'Beşiktaş', 'Beykoz', 'Beylikdüzü', 'Beyoğlu', 'Büyükçekmece', 'Çatalca', 'Çekmeköy', 'Esenler', 'Esenyurt', 'Eyüpsultan', 'Fatih', 'Gaziosmanpaşa', 'Güngören', 'Kadıköy', 'Kağıthane', 'Kartal', 'Küçükçekmece', 'Maltepe', 'Pendik', 'Sancaktepe', 'Sarıyer', 'Silivri', 'Sultanbeyli', 'Sultangazi', 'Şile', 'Şişli', 'Tuzla', 'Ümraniye', 'Üsküdar', 'Zeytinburnu'
+];
+
 const MessageForm: React.FC<MessageFormProps> = ({ role, onSubmit, isSubmitting }) => {
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
     email: '',
-    message: ''
+    message: '',
+    district: '' // Yeni eklendi
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -21,8 +25,8 @@ const MessageForm: React.FC<MessageFormProps> = ({ role, onSubmit, isSubmitting 
     const newErrors: Record<string, string> = {};
     if (!formData.fullName.trim()) newErrors.fullName = 'İsim Soyisim zorunludur.';
     if (!formData.message.trim()) newErrors.message = 'Mesaj alanı boş bırakılamaz.';
+    if (!formData.district) newErrors.district = 'Lütfen bir ilçe seçiniz.'; // Yeni eklendi
     
-    // Turkish Phone validation (starts with 05 and has 11 digits)
     const phoneRegex = /^05\d{9}$/;
     if (!phoneRegex.test(formData.phone.replace(/\s/g, ''))) {
       newErrors.phone = 'Geçerli bir Türkiye mobil numarası giriniz (05xx...).';
@@ -71,16 +75,32 @@ const MessageForm: React.FC<MessageFormProps> = ({ role, onSubmit, isSubmitting 
         </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-semibold text-slate-700 mb-1">E-posta</label>
-        <input
-          type="email"
-          className={`w-full px-4 py-3 rounded-xl border ${errors.email ? 'border-red-500 bg-red-50' : 'border-slate-200 focus:border-indigo-500'} outline-none transition-all`}
-          placeholder="ahmet@email.com"
-          value={formData.email}
-          onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
-        />
-        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-1">E-posta</label>
+          <input
+            type="email"
+            className={`w-full px-4 py-3 rounded-xl border ${errors.email ? 'border-red-500 bg-red-50' : 'border-slate-200 focus:border-indigo-500'} outline-none transition-all`}
+            placeholder="ahmet@email.com"
+            value={formData.email}
+            onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
+          />
+          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-1">İlçe</label>
+          <select
+            className={`w-full px-4 py-3 rounded-xl border ${errors.district ? 'border-red-500 bg-red-50' : 'border-slate-200 focus:border-indigo-500'} outline-none transition-all bg-white`}
+            value={formData.district}
+            onChange={e => setFormData(prev => ({ ...prev, district: e.target.value }))}
+          >
+            <option value="">İlçe Seçiniz</option>
+            {ISTANBUL_DISTRICTS.map(district => (
+              <option key={district} value={district}>{district}</option>
+            ))}
+          </select>
+          {errors.district && <p className="text-red-500 text-xs mt-1">{errors.district}</p>}
+        </div>
       </div>
 
       <div>
