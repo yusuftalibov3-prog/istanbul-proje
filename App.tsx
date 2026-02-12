@@ -8,6 +8,11 @@ import MessageFeed from './components/MessageFeed';
 import WhyUs from './components/WhyUs';
 import { GoogleGenAI } from "@google/genai";
 
+
+
+const ISTANBUL_DISTRICTS = [
+  'Adalar', 'Arnavutköy', 'Ataşehir', 'Avcılar', 'Bağcılar', 'Bahçelievler', 'Bakırköy', 'Başakşehir', 'Bayrampaşa', 'Beşiktaş', 'Beykoz', 'Beylikdüzü', 'Beyoğlu', 'Büyükçekmece', 'Çatalca', 'Çekmeköy', 'Esenler', 'Esenyurt', 'Eyüpsultan', 'Fatih', 'Gaziosmanpaşa', 'Güngören', 'Kadıköy', 'Kağıthane', 'Kartal', 'Küçükçekmece', 'Maltepe', 'Pendik', 'Sancaktepe', 'Sarıyer', 'Silivri', 'Sultanbeyli', 'Sultangazi', 'Şile', 'Şişli', 'Tuzla', 'Ümraniye', 'Üsküdar', 'Zeytinburnu'
+];
 const App: React.FC = () => {
   const [messages, setMessages] = useState<SolidarityMessage[]>([]);
   const [activeRole, setActiveRole] = useState<UserRole | null>(null);
