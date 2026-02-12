@@ -19,6 +19,9 @@ const App: React.FC = () => {
 
   // Initial dummy data and loading my messages from localStorage
   useEffect(() => {
+    useEffect(() => {
+  localStorage.setItem('ist_elele_my_messages', JSON.stringify(myMessageIds));
+}, [myMessageIds]);
     const savedIds = localStorage.getItem('ist_elele_my_messages');
     if (savedIds) {
       setMyMessageIds(JSON.parse(savedIds));
