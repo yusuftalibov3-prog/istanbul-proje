@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { SolidarityMessage, UserRole } from '../types';
 
@@ -15,7 +14,8 @@ const MessageFeed: React.FC<MessageFeedProps> = ({ messages, onDelete, myMessage
   const filteredMessages = messages.filter(m => {
     const matchesFilter = filter === 'all' || m.role === filter;
     const matchesSearch = m.message.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          m.fullName.toLowerCase().includes(searchTerm.toLowerCase());
+                          m.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          (m.district && m.district.toLowerCase().includes(searchTerm.toLowerCase()));
     return matchesFilter && matchesSearch;
   });
 
@@ -35,7 +35,7 @@ const MessageFeed: React.FC<MessageFeedProps> = ({ messages, onDelete, myMessage
           <i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
           <input
             type="text"
-            placeholder="İlanlar içinde ara (isim veya mesaj)..."
+            placeholder="İlanlar içinde ara (isim, mesaj veya ilçe)..."
             className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white border border-slate-200 focus:border-indigo-500 outline-none transition-all shadow-sm"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
@@ -81,9 +81,12 @@ const MessageFeed: React.FC<MessageFeedProps> = ({ messages, onDelete, myMessage
                 <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${getRoleBadgeColor(msg.role)}`}>
                   {msg.role}
                 </span>
-                <span className="text-xs text-slate-400">
-                  {new Date(msg.createdAt).toLocaleDateString('tr-TR')}
-                </span>
+                <div className="text-right">
+                  <span className="block text-[10px] font-bold text-indigo-600 uppercase tracking-tight">{msg.district || 'İstanbul'}</span>
+                  <span className="text-[10px] text-slate-400">
+                    {new Date(msg.createdAt).toLocaleDateString('tr-TR')}
+                  </span>
+                </div>
               </div>
               
               <p className="text-slate-800 font-medium leading-relaxed flex-grow mb-6">
@@ -115,7 +118,6 @@ const MessageFeed: React.FC<MessageFeedProps> = ({ messages, onDelete, myMessage
               <i className="fas fa-search"></i>
             </div>
             <h3 className="text-xl font-bold text-slate-800">Sonuç Bulunamadı</h3>
-            <p className="text-slate-500">Aramanıza veya filtrenize uygun mesaj bulunmuyor.</p>
           </div>
         )}
       </div>
