@@ -16,36 +16,15 @@ const App: React.FC = () => {
   const [aiSummary, setAiSummary] = useState<string>('');
   const [myMessageIds, setMyMessageIds] = useState<string[]>([]);
 
-  // Verileri Yükle
+  // Verileri Yükle (Botlar silindi)
   useEffect(() => {
     const savedMessages = localStorage.getItem('ist_elele_messages');
     const savedIds = localStorage.getItem('ist_elele_my_messages');
 
-    const initialData: SolidarityMessage[] = [
-      {
-        id: '1',
-        fullName: 'Ahmet Yılmaz',
-        phone: '05321112233',
-        email: 'ahmet@firin.com',
-        message: 'Akşam 8\'den sonra fırındaki simitler öğrenciler için ücretsizdir. Lütfen kimliğinizle geliniz.',
-        role: UserRole.SHOPKEEPER,
-        createdAt: Date.now() - 3600000
-      },
-      {
-        id: '2',
-        fullName: 'Ayşe Kaya',
-        phone: '05442223344',
-        email: 'ayse@veli.com',
-        message: 'Beşiktaş - Levent arası okul servisimiz bozuldu. Aynı yöne giden, aracında yer olan veli var mı?',
-        role: UserRole.PARENT,
-        createdAt: Date.now() - 7200000
-      }
-    ];
-
     if (savedMessages) {
       setMessages(JSON.parse(savedMessages));
     } else {
-      setMessages(initialData);
+      setMessages([]); // Başlangıçta boş liste
     }
 
     if (savedIds) {
@@ -55,9 +34,7 @@ const App: React.FC = () => {
 
   // Verileri Kaydet
   useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem('ist_elele_messages', JSON.stringify(messages));
-    }
+    localStorage.setItem('ist_elele_messages', JSON.stringify(messages));
     localStorage.setItem('ist_elele_my_messages', JSON.stringify(myMessageIds));
   }, [messages, myMessageIds]);
 
@@ -81,12 +58,8 @@ const App: React.FC = () => {
 
   const handleDeleteMessage = (id: string) => {
     if (window.confirm('Bu ilanı silmek istediğinize emin misiniz?')) {
-      const updatedMessages = messages.filter(m => m.id !== id);
-      const updatedIds = myMessageIds.filter(mid => mid !== id);
-      setMessages(updatedMessages);
-      setMyMessageIds(updatedIds);
-      localStorage.setItem('ist_elele_messages', JSON.stringify(updatedMessages));
-      localStorage.setItem('ist_elele_my_messages', JSON.stringify(updatedIds));
+      setMessages(prev => prev.filter(m => m.id !== id));
+      setMyMessageIds(prev => prev.filter(mid => mid !== id));
     }
   };
 
@@ -94,7 +67,7 @@ const App: React.FC = () => {
     if (messages.length === 0) return;
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-      const prompt = `Aşağıdaki dayanışma mesajlarını kısaca özetle ve bugünün dayanışma ruhunu bir cümleyle anlat. Mesajlar: ${messages.map(m => m.message).join(' | ')}`;
+      const prompt = `Mesajları özetle: ${messages.map(m => m.message).join(' | ')}`;
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: prompt,
@@ -129,28 +102,12 @@ const App: React.FC = () => {
         )}
         {view === 'feed' && !activeRole && (
           <div className="max-w-6xl mx-auto px-4 py-12">
-            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-              <h2 className="text-3xl font-bold text-slate-900">Canlı Dayanışma Havuzu</h2>
-              <div className="flex gap-2">
-                <button onClick={() => setView('landing')} className="px-6 py-2 bg-indigo-600 text-white rounded-full font-medium hover:bg-indigo-700 transition-all shadow-md">
-                  <i className="fas fa-plus mr-2"></i> İlan Ver
-                </button>
-                <button onClick={getAiSummary} className="px-6 py-2 bg-emerald-100 text-emerald-700 rounded-full font-medium hover:bg-emerald-200 transition-all">
-                  <i className="fas fa-robot mr-2"></i> Yapay Zeka Özeti
-                </button>
-              </div>
-            </div>
-            {aiSummary && (
-              <div className="mb-8 p-4 bg-indigo-50 border border-indigo-100 rounded-xl text-indigo-900 flex items-start italic">
-                {aiSummary}
-              </div>
-            )}
+            <h2 className="text-3xl font-bold text-slate-900 mb-8">Canlı Dayanışma Havuzu</h2>
             <MessageFeed messages={messages} onDelete={handleDeleteMessage} myMessageIds={myMessageIds} />
           </div>
         )}
       </main>
       <footer className="bg-slate-900 text-slate-400 py-12 text-center">
-        <h3 className="text-white text-xl font-bold mb-4">İstanbul El Ele</h3>
         <p className="text-indigo-400 font-semibold italic">Bu web sitesi 14 yaşındaki bir genç girişimci tarafından yapılmıştır.</p>
       </footer>
     </div>
