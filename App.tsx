@@ -18,6 +18,7 @@ const App: React.FC = () => {
 
   // Verileri Yükle
   useEffect(() => {
+    localStorage.clear();
     const savedMessages = localStorage.getItem('ist_elele_messages');
     const savedIds = localStorage.getItem('ist_elele_my_messages');
 
