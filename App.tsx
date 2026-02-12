@@ -25,6 +25,9 @@ const App: React.FC = () => {
     const savedIds = localStorage.getItem('ist_elele_my_messages');
     if (savedIds) {
       setMyMessageIds(JSON.parse(savedIds));
+      useEffect(() => {
+  localStorage.setItem('ist_elele_my_messages', JSON.stringify(myMessageIds));
+}, [myMessageIds]);
     }
 
     const initialData: SolidarityMessage[] = [
