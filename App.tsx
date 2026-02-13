@@ -10,6 +10,15 @@ import { GoogleGenAI } from "@google/genai";
 
 
 
+const [isDark, setIsDark] = useState(false);
+
+// En dıştaki div'e şunu ekle:
+<div className={isDark ? 'dark-theme' : 'light-theme'}>
+  {/* Navbar'a butonu gönderiyoruz */}
+  <Navbar darkMode={isDark} setDarkMode={setIsDark} ... /> 
+  ...
+</div>
+
 const ISTANBUL_DISTRICTS = [
   'Adalar', 'Arnavutköy', 'Ataşehir', 'Avcılar', 'Bağcılar', 'Bahçelievler', 'Bakırköy', 'Başakşehir', 'Bayrampaşa', 'Beşiktaş', 'Beykoz', 'Beylikdüzü', 'Beyoğlu', 'Büyükçekmece', 'Çatalca', 'Çekmeköy', 'Esenler', 'Esenyurt', 'Eyüpsultan', 'Fatih', 'Gaziosmanpaşa', 'Güngören', 'Kadıköy', 'Kağıthane', 'Kartal', 'Küçükçekmece', 'Maltepe', 'Pendik', 'Sancaktepe', 'Sarıyer', 'Silivri', 'Sultanbeyli', 'Sultangazi', 'Şile', 'Şişli', 'Tuzla', 'Ümraniye', 'Üsküdar', 'Zeytinburnu'
 ];
