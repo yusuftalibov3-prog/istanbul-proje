@@ -17,7 +17,7 @@ const MessageForm: React.FC<MessageFormProps> = ({ role, onSubmit, isSubmitting 
     phone: '',
     email: '',
     message: '',
-    district: '' // Yeni eklendi
+    district: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -25,7 +25,7 @@ const MessageForm: React.FC<MessageFormProps> = ({ role, onSubmit, isSubmitting 
     const newErrors: Record<string, string> = {};
     if (!formData.fullName.trim()) newErrors.fullName = 'İsim Soyisim zorunludur.';
     if (!formData.message.trim()) newErrors.message = 'Mesaj alanı boş bırakılamaz.';
-    if (!formData.district) newErrors.district = 'Lütfen bir ilçe seçiniz.'; // Yeni eklendi
+    if (!formData.district) newErrors.district = 'Lütfen bir ilçe seçiniz.';
     
     const phoneRegex = /^05\d{9}$/;
     if (!phoneRegex.test(formData.phone.replace(/\s/g, ''))) {
@@ -48,14 +48,22 @@ const MessageForm: React.FC<MessageFormProps> = ({ role, onSubmit, isSubmitting 
     }
   };
 
+  // Ortak input stili (Dark mode destekli)
+  const inputClass = (errorKey: string) => `
+    w-full px-4 py-3 rounded-xl border outline-none transition-all
+    ${errors[errorKey] 
+      ? 'border-red-500 bg-red-50 dark:bg-red-900/20' 
+      : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:border-indigo-500 dark:focus:border-indigo-400'}
+  `;
+
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-1">Ad Soyad</label>
+          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Ad Soyad</label>
           <input
             type="text"
-            className={`w-full px-4 py-3 rounded-xl border ${errors.fullName ? 'border-red-500 bg-red-50' : 'border-slate-200 focus:border-indigo-500'} outline-none transition-all`}
+            className={inputClass('fullName')}
             placeholder="Örn: Ahmet Yılmaz"
             value={formData.fullName}
             onChange={e => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
@@ -63,10 +71,10 @@ const MessageForm: React.FC<MessageFormProps> = ({ role, onSubmit, isSubmitting 
           {errors.fullName && <p className="text-red-500 text-xs mt-1">{errors.fullName}</p>}
         </div>
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-1">Telefon</label>
+          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Telefon</label>
           <input
             type="tel"
-            className={`w-full px-4 py-3 rounded-xl border ${errors.phone ? 'border-red-500 bg-red-50' : 'border-slate-200 focus:border-indigo-500'} outline-none transition-all`}
+            className={inputClass('phone')}
             placeholder="05xx xxx xx xx"
             value={formData.phone}
             onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
@@ -77,10 +85,10 @@ const MessageForm: React.FC<MessageFormProps> = ({ role, onSubmit, isSubmitting 
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-1">E-posta</label>
+          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">E-posta</label>
           <input
             type="email"
-            className={`w-full px-4 py-3 rounded-xl border ${errors.email ? 'border-red-500 bg-red-50' : 'border-slate-200 focus:border-indigo-500'} outline-none transition-all`}
+            className={inputClass('email')}
             placeholder="ahmet@email.com"
             value={formData.email}
             onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
@@ -88,15 +96,15 @@ const MessageForm: React.FC<MessageFormProps> = ({ role, onSubmit, isSubmitting 
           {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
         </div>
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-1">İlçe</label>
+          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">İlçe</label>
           <select
-            className={`w-full px-4 py-3 rounded-xl border ${errors.district ? 'border-red-500 bg-red-50' : 'border-slate-200 focus:border-indigo-500'} outline-none transition-all bg-white`}
+            className={inputClass('district')}
             value={formData.district}
             onChange={e => setFormData(prev => ({ ...prev, district: e.target.value }))}
           >
-            <option value="">İlçe Seçiniz</option>
+            <option value="" className="dark:bg-slate-800">İlçe Seçiniz</option>
             {ISTANBUL_DISTRICTS.map(district => (
-              <option key={district} value={district}>{district}</option>
+              <option key={district} value={district} className="dark:bg-slate-800">{district}</option>
             ))}
           </select>
           {errors.district && <p className="text-red-500 text-xs mt-1">{errors.district}</p>}
@@ -104,10 +112,10 @@ const MessageForm: React.FC<MessageFormProps> = ({ role, onSubmit, isSubmitting 
       </div>
 
       <div>
-        <label className="block text-sm font-semibold text-slate-700 mb-1">Mesajınız</label>
+        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Mesajınız</label>
         <textarea
           rows={5}
-          className={`w-full px-4 py-3 rounded-xl border ${errors.message ? 'border-red-500 bg-red-50' : 'border-slate-200 focus:border-indigo-500'} outline-none transition-all resize-none`}
+          className={`${inputClass('message')} resize-none`}
           placeholder="Dayanışma ilanı detaylarını buraya yazınız..."
           value={formData.message}
           onChange={e => setFormData(prev => ({ ...prev, message: e.target.value }))}
@@ -118,7 +126,7 @@ const MessageForm: React.FC<MessageFormProps> = ({ role, onSubmit, isSubmitting 
       <button
         type="submit"
         disabled={isSubmitting}
-        className={`w-full py-4 bg-indigo-600 text-white rounded-xl font-bold text-lg hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 flex items-center justify-center ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+        className={`w-full py-4 bg-indigo-600 text-white rounded-xl font-bold text-lg hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 dark:shadow-none flex items-center justify-center ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
       >
         {isSubmitting ? (
           <><i className="fas fa-spinner fa-spin mr-2"></i> Gönderiliyor...</>
