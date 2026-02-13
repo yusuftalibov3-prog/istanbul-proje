@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { UserRole } from '../types';
 
@@ -14,7 +13,7 @@ const TripleEntry: React.FC<TripleEntryProps> = ({ onSelectRole }) => {
       icon: 'fa-graduation-cap',
       desc: 'İhtiyaçlarını paylaş, burs veya kaynak desteği bul.',
       color: 'bg-indigo-500',
-      shadow: 'shadow-indigo-100'
+      shadow: 'shadow-indigo-100 dark:shadow-none' // Karanlıkta gölgeyi kapattık
     },
     {
       title: 'Ben Esnafım',
@@ -22,7 +21,7 @@ const TripleEntry: React.FC<TripleEntryProps> = ({ onSelectRole }) => {
       icon: 'fa-store',
       desc: 'Öğrencilere destek ol, kampanya duyur, iyiliği yay.',
       color: 'bg-emerald-500',
-      shadow: 'shadow-emerald-100'
+      shadow: 'shadow-emerald-100 dark:shadow-none'
     },
     {
       title: 'Ben Veliyim',
@@ -30,7 +29,7 @@ const TripleEntry: React.FC<TripleEntryProps> = ({ onSelectRole }) => {
       icon: 'fa-users',
       desc: 'Okul ulaşımı, kitap ve eğitim yardımlaşmasına katıl.',
       color: 'bg-blue-500',
-      shadow: 'shadow-blue-100'
+      shadow: 'shadow-blue-100 dark:shadow-none'
     }
   ];
 
@@ -41,14 +40,14 @@ const TripleEntry: React.FC<TripleEntryProps> = ({ onSelectRole }) => {
           <button
             key={item.role}
             onClick={() => onSelectRole(item.role)}
-            className={`group text-left p-8 bg-white border border-slate-100 rounded-3xl transition-all hover:scale-[1.02] hover:shadow-2xl ${item.shadow}`}
+            className={`group text-left p-8 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl transition-all hover:scale-[1.02] hover:shadow-2xl dark:hover:border-indigo-500 ${item.shadow}`}
           >
-            <div className={`w-16 h-16 ${item.color} rounded-2xl flex items-center justify-center text-white text-2xl mb-6 group-hover:rotate-6 transition-transform`}>
+            <div className={`w-16 h-16 ${item.color} rounded-2xl flex items-center justify-center text-white text-2xl mb-6 group-hover:rotate-6 transition-transform shadow-lg`}>
               <i className={`fas ${item.icon}`}></i>
             </div>
-            <h3 className="text-2xl font-bold text-slate-900 mb-2">{item.title}</h3>
-            <p className="text-slate-500 leading-relaxed mb-6">{item.desc}</p>
-            <div className="flex items-center text-indigo-600 font-bold">
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">{item.title}</h3>
+            <p className="text-slate-500 dark:text-slate-400 leading-relaxed mb-6">{item.desc}</p>
+            <div className="flex items-center text-indigo-600 dark:text-indigo-400 font-bold">
               Mesajını Yaz <i className="fas fa-arrow-right ml-2 group-hover:translate-x-2 transition-transform"></i>
             </div>
           </button>
