@@ -6,6 +6,7 @@ import TripleEntry from './components/TripleEntry';
 import MessageForm from './components/MessageForm';
 import MessageFeed from './components/MessageFeed';
 import WhyUs from './components/WhyUs';
+import Chatbot from './components/Chatbot'; // Chatbot import edildi
 import { GoogleGenAI } from "@google/genai";
 
 const App: React.FC = () => {
@@ -98,7 +99,6 @@ const App: React.FC = () => {
           <div className="max-w-6xl mx-auto px-4 py-12">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-3xl font-bold">Canlı Dayanışma Havuzu</h2>
-              {/* Havuzdayken kaybolan butonu buraya geri ekledim */}
               <button 
                 onClick={() => { setView('landing'); setActiveRole(null); }}
                 className="px-6 py-2 bg-indigo-600 text-white rounded-full font-bold hover:bg-indigo-700 transition-all"
@@ -115,6 +115,9 @@ const App: React.FC = () => {
         <h3 className="text-white text-xl font-bold mb-2">İstanbul El Ele</h3>
         <p className="text-sm">Bu web sitesi 14 yaşındaki bir genç girişimci tarafından yapılmıştır.</p>
       </footer>
+
+      {/* Chatbot bileşeni eklendi */}
+      <Chatbot />
     </div>
   );
 };
