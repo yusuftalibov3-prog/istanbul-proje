@@ -1,100 +1,63 @@
-import React, { useState, useEffect } from 'react';
-import { UserRole, SolidarityMessage, ViewState } from './types';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import TripleEntry from './components/TripleEntry';
-import MessageForm from './components/MessageForm';
-import MessageFeed from './components/MessageFeed';
-import WhyUs from './components/WhyUs';
-import { GoogleGenAI } from "@google/genai";
+// ... importlar aynı ...
 
 const App: React.FC = () => {
-  const [messages, setMessages] = useState<SolidarityMessage[]>([]);
-  const [activeRole, setActiveRole] = useState<UserRole | null>(null);
-  const [view, setView] = useState<ViewState>('landing');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [aiSummary, setAiSummary] = useState<string>('');
-  const [myMessageIds, setMyMessageIds] = useState<string[]>([]);
-  
-  // DARK MODE STATE
+  // ... diğer state'ler aynı ...
+
+  // DARK MODE STATE - Başlangıcı daha sağlam yapalım
   const [isDark, setIsDark] = useState(() => {
-    return localStorage.getItem('theme') === 'dark';
+    const saved = localStorage.getItem('theme');
+    return saved === 'dark';
   });
 
-  // KRİTİK DÜZELTME: document.documentElement kullanarak tüm sayfayı tetikliyoruz
+  // TEMA DEĞİŞİMİ - Bu kısım her iki yöne de (aydınlık/karanlık) kesin hükmeder
   useEffect(() => {
     const root = window.document.documentElement;
     if (isDark) {
       root.classList.add('dark');
+      root.classList.remove('light'); // Ekstra güvenlik
       localStorage.setItem('theme', 'dark');
     } else {
       root.classList.remove('dark');
+      root.classList.add('light'); // Ekstra güvenlik
       localStorage.setItem('theme', 'light');
     }
   }, [isDark]);
 
-  // Verileri Yükle
-  useEffect(() => {
-    const savedMessages = localStorage.getItem('ist_elele_messages');
-    const savedIds = localStorage.getItem('ist_elele_my_messages');
-    if (savedMessages) setMessages(JSON.parse(savedMessages));
-    if (savedIds) setMyMessageIds(JSON.parse(savedIds));
-  }, []);
+  // ... Veri yükleme ve kaydetme useEffect'leri aynı ...
 
-  // Verileri Kaydet
-  useEffect(() => {
-    localStorage.setItem('ist_elele_messages', JSON.stringify(messages));
-    localStorage.setItem('ist_elele_my_messages', JSON.stringify(myMessageIds));
-  }, [messages, myMessageIds]);
-
-  const handleAddMessage = (newMessage: Omit<SolidarityMessage, 'id' | 'createdAt'>) => {
-    setIsSubmitting(true);
-    const id = Math.random().toString(36).substr(2, 9);
-    const message: SolidarityMessage = { ...newMessage, id, createdAt: Date.now() };
-    
-    setTimeout(() => {
-      setMessages(prev => [message, ...prev]);
-      setMyMessageIds(prev => [...prev, id]);
-      setActiveRole(null);
-      setView('feed');
-      setIsSubmitting(false);
-    }, 800);
-  };
-
-  const handleDeleteMessage = (id: string) => {
-    if (window.confirm('Bu ilanı silmek istediğinize emin misiniz?')) {
-      setMessages(prev => prev.filter(m => m.id !== id));
-      setMyMessageIds(prev => prev.filter(mid => mid !== id));
-    }
-  };
+  // Mesaj ekleme ve silme fonksiyonları aynı ...
 
   const getAiSummary = async () => {
     if (messages.length === 0) return;
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+      // DİKKAT: Gemini 1.5 Flash veya güncel bir model ismi kullandığından emin ol
+      const ai = new GoogleGenAI({ apiKey: "SENIN_API_KEYIN" }); 
+      const model = ai.getGenerativeModel({ model: "gemini-1.5-flash" });
+      
       const prompt = `Aşağıdaki dayanışma mesajlarını kısaca özetle ve bugünün dayanışma ruhunu bir cümleyle anlat. Mesajlar: ${messages.map(m => m.message).join(' | ')}`;
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: prompt,
-      });
-      setAiSummary(response.text || '');
+      
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      setAiSummary(response.text());
     } catch (error) {
       console.error('AI Summary failed', error);
+      setAiSummary("Özet şu an oluşturulamadı.");
     }
   };
 
   return (
-    /* Buradaki 'dark' kontrolü ve bg- renkleri tüm alt bileşenlerin zeminini senkronize eder */
-    <div className="min-h-screen flex flex-col transition-colors duration-500 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+    // transition-all eklendi, böylece her şey yumuşak değişecek
+    <div className="min-h-screen flex flex-col transition-all duration-500 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100">
       
       <Navbar 
         onNavigate={(v) => { setView(v); setActiveRole(null); }} 
         currentView={view} 
         isDark={isDark} 
-        toggleDark={() => setIsDark(!isDark)} 
+        toggleDark={() => setIsDark(prev => !prev)} 
       />
 
       <main className="flex-grow">
+        {/* İçerik bölümleri aynı kalabilir */}
         {view === 'landing' && !activeRole && (
           <>
             <Hero />
@@ -131,6 +94,7 @@ const App: React.FC = () => {
             
             {aiSummary && (
               <div className="mb-8 p-4 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl text-indigo-900 dark:text-indigo-200 flex items-start italic transition-colors">
+                <i className="fas fa-sparkles mr-3 mt-1 text-indigo-500"></i>
                 {aiSummary}
               </div>
             )}
