@@ -21,8 +21,7 @@ const Chatbot: React.FC = () => {
 
     // --- ÖNEMLİ: API KEY KONTROLÜ ---
     // Buraya Google AI Studio'dan aldığın gerçek key'i tırnak içine yapıştır.
-    const API_KEY = "	
-gen-lang-client-0429309084"; 
+    const API_KEY = "AIzaSyAofZl9puCnplhg4lODC76ps3bMxAT5P5Q"; 
     
     const userText = input;
     setInput('');
