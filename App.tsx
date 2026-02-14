@@ -16,12 +16,10 @@ const App: React.FC = () => {
   const [aiSummary, setAiSummary] = useState<string>('');
   const [myMessageIds, setMyMessageIds] = useState<string[]>([]);
   
-  // DARK MODE STATE
   const [isDark, setIsDark] = useState(() => {
     return localStorage.getItem('theme') === 'dark';
   });
 
-  // TEMA KONTROLÜ - Sadece class ekle/çıkar yapıyoruz, render'ı bozmaz
   useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add('dark');
@@ -32,7 +30,6 @@ const App: React.FC = () => {
     }
   }, [isDark]);
 
-  // Verileri Yükle
   useEffect(() => {
     const savedMessages = localStorage.getItem('ist_elele_messages');
     const savedIds = localStorage.getItem('ist_elele_my_messages');
@@ -40,7 +37,6 @@ const App: React.FC = () => {
     if (savedIds) setMyMessageIds(JSON.parse(savedIds));
   }, []);
 
-  // Verileri Kaydet
   useEffect(() => {
     localStorage.setItem('ist_elele_messages', JSON.stringify(messages));
     localStorage.setItem('ist_elele_my_messages', JSON.stringify(myMessageIds));
@@ -68,7 +64,6 @@ const App: React.FC = () => {
   };
 
   return (
-    // 'dark' sınıfını dinamik olarak en dış sarmalayıcıya da ekliyoruz
     <div className={`min-h-screen flex flex-col transition-colors duration-300 ${isDark ? 'dark bg-slate-950 text-white' : 'bg-white text-slate-900'}`}>
       
       <Navbar 
@@ -101,7 +96,16 @@ const App: React.FC = () => {
 
         {view === 'feed' && (
           <div className="max-w-6xl mx-auto px-4 py-12">
-            <h2 className="text-3xl font-bold mb-8">Canlı Dayanışma Havuzu</h2>
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-3xl font-bold">Canlı Dayanışma Havuzu</h2>
+              {/* Havuzdayken kaybolan butonu buraya geri ekledim */}
+              <button 
+                onClick={() => { setView('landing'); setActiveRole(null); }}
+                className="px-6 py-2 bg-indigo-600 text-white rounded-full font-bold hover:bg-indigo-700 transition-all"
+              >
+                + Yeni İlan Ver
+              </button>
+            </div>
             <MessageFeed messages={messages} onDelete={handleDeleteMessage} myMessageIds={myMessageIds} />
           </div>
         )}
