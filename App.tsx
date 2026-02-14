@@ -21,13 +21,14 @@ const App: React.FC = () => {
     return localStorage.getItem('theme') === 'dark';
   });
 
-  // Dark Mode Uygulama
+  // KRİTİK DÜZELTME: document.documentElement kullanarak tüm sayfayı tetikliyoruz
   useEffect(() => {
+    const root = window.document.documentElement;
     if (isDark) {
-      document.documentElement.classList.add('dark');
+      root.classList.add('dark');
       localStorage.setItem('theme', 'dark');
     } else {
-      document.documentElement.classList.remove('dark');
+      root.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
   }, [isDark]);
@@ -83,10 +84,9 @@ const App: React.FC = () => {
   };
 
   return (
-    // 'dark' sınıfı tüm sayfayı kapsasın
-    <div className={`min-h-screen flex flex-col transition-colors duration-300 ${isDark ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'}`}>
+    /* Buradaki 'dark' kontrolü ve bg- renkleri tüm alt bileşenlerin zeminini senkronize eder */
+    <div className="min-h-screen flex flex-col transition-colors duration-500 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100">
       
-      {/* Navbar'a tema değiştirme yeteneği verdik */}
       <Navbar 
         onNavigate={(v) => { setView(v); setActiveRole(null); }} 
         currentView={view} 
@@ -108,7 +108,7 @@ const App: React.FC = () => {
             <button onClick={() => setActiveRole(null)} className="mb-6 flex items-center text-slate-500 dark:text-slate-400 hover:text-indigo-600 transition-colors">
               <i className="fas fa-arrow-left mr-2"></i> Geri Dön
             </button>
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8 border border-slate-100 dark:border-slate-800">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8 border border-slate-100 dark:border-slate-800 transition-colors">
               <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">{activeRole} Formu</h2>
               <MessageForm role={activeRole} onSubmit={handleAddMessage} isSubmitting={isSubmitting} />
             </div>
@@ -130,7 +130,7 @@ const App: React.FC = () => {
             </div>
             
             {aiSummary && (
-              <div className="mb-8 p-4 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl text-indigo-900 dark:text-indigo-200 flex items-start italic">
+              <div className="mb-8 p-4 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl text-indigo-900 dark:text-indigo-200 flex items-start italic transition-colors">
                 {aiSummary}
               </div>
             )}
@@ -140,7 +140,7 @@ const App: React.FC = () => {
         )}
       </main>
 
-      <footer className="bg-slate-900 text-slate-400 py-12 text-center">
+      <footer className="bg-slate-900 dark:bg-black text-slate-400 py-12 text-center transition-colors">
         <h3 className="text-white text-xl font-bold mb-4">İstanbul El Ele</h3>
         <p className="text-indigo-400 font-semibold italic">Bu web sitesi 14 yaşındaki bir genç girişimci tarafından yapılmıştır.</p>
       </footer>
