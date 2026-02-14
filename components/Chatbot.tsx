@@ -1,11 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-
-// Vercel build hatasını engellemek için dış kütüphaneyi bu şekilde tanımlıyoruz
-declare global {
-  interface Window {
-    googleGenAI?: any;
-  }
-}
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const Chatbot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,18 +15,21 @@ const Chatbot: React.FC = () => {
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
+    // Vercel'e eklediğin anahtarı buradan okuyacak
+    const API_KEY = import.meta.env.VITE_GEMINI_API_KEY; 
+    
+    if (!API_KEY) {
+      setMessages(prev => [...prev, { role: 'ai', text: 'Hata: API anahtarı bulunamadı.' }]);
+      return;
+    }
+
     const userText = input;
     setInput('');
     setMessages(prev => [...prev, { role: 'user', text: userText }]);
     setIsLoading(true);
 
     try {
-      // API KEY'ini buraya tırnak içine yapıştır
-      const API_KEY = "AIzaSyDEI9MbDNlzeBWGUJTIXbIOuKXg6VEdP3M"; 
-      
-      // Importmap üzerinden çekilen kütüphaneyi dinamik olarak çağırıyoruz
-      const { GoogleGenAI } = await import("@google/genai" as any);
-      const genAI = new GoogleGenAI(API_KEY);
+      const genAI = new GoogleGenerativeAI(API_KEY);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       
       const result = await model.generateContent(`Sen İstanbul El Ele platformu asistanısın. Samimi ol. Soru: ${userText}`);
@@ -57,7 +54,9 @@ const Chatbot: React.FC = () => {
               <div className="w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
               AI Destek
             </div>
-            <button onClick={() => setIsOpen(false)} className="hover:rotate-90 transition-transform"><i className="fas fa-times"></i></button>
+            <button onClick={() => setIsOpen(false)} className="hover:rotate-90 transition-transform">
+              <i className="fas fa-times"></i>
+            </button>
           </div>
           
           <div ref={scrollRef} className="flex-grow overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-slate-950">
@@ -68,7 +67,7 @@ const Chatbot: React.FC = () => {
                 </div>
               </div>
             ))}
-            {isLoading && <div className="text-xs text-slate-400 animate-pulse italic">Cevap yazılıyor...</div>}
+            {isLoading && <div className="text-xs text-slate-400 animate-pulse italic p-2">Cevap yazılıyor...</div>}
           </div>
 
           <div className="p-4 bg-white dark:bg-slate-900 border-t dark:border-slate-800 flex gap-2">
