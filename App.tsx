@@ -6,15 +6,13 @@ import TripleEntry from './components/TripleEntry';
 import MessageForm from './components/MessageForm';
 import MessageFeed from './components/MessageFeed';
 import WhyUs from './components/WhyUs';
-import Chatbot from './components/Chatbot'; // Chatbot import edildi
-import { GoogleGenAI } from "@google/genai";
+import Chatbot from './components/Chatbot'; 
 
 const App: React.FC = () => {
   const [messages, setMessages] = useState<SolidarityMessage[]>([]);
   const [activeRole, setActiveRole] = useState<UserRole | null>(null);
   const [view, setView] = useState<ViewState>('landing');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [aiSummary, setAiSummary] = useState<string>('');
   const [myMessageIds, setMyMessageIds] = useState<string[]>([]);
   
   const [isDark, setIsDark] = useState(() => {
@@ -116,7 +114,6 @@ const App: React.FC = () => {
         <p className="text-sm">Bu web sitesi 14 yaşındaki bir genç girişimci tarafından yapılmıştır.</p>
       </footer>
 
-      {/* Chatbot bileşeni eklendi */}
       <Chatbot />
     </div>
   );
